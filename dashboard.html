@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | PlacedBridge</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background: linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 50%, #FFFFFF 100%); 
+            overflow-x: hidden;
+            position: relative;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle at 20% 50%, rgba(34, 197, 94, 0.02) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(59, 130, 246, 0.02) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        /* Navbar specific */
+        .nav-link { display: inline-flex; align-items: center; gap: 8px; padding: 12px 8px; color: #64748B; font-weight: 600; font-size: 0.875rem; transition: all 0.3s ease; border-bottom: 3px solid transparent; white-space: nowrap; position: relative; }
+        @media (min-width: 768px) {
+            .nav-link { padding: 16px 12px; }
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -3px;
+            left: 0;
+            width: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #16a34a, #22c55e);
+            transition: width 0.3s ease;
+        }
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        .nav-link:hover { color: #16a34a; }
+        .nav-link.active { color: #16a34a; }
+        .nav-link.active::after { width: 100%; }
+        
+        /* Cards */
+        .glass-card { 
+            background: linear-gradient(135deg, #FFFFFF 0%, #FAFBFC 100%); 
+            border: 1px solid transparent;
+            background-image: 
+                linear-gradient(135deg, #FFFFFF 0%, #FAFBFC 100%),
+                linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(59, 130, 246, 0.1));
+            background-origin: padding-box, border-box;
+            background-clip: padding-box, border-box;
+            border-radius: 16px; 
+            box-shadow: 0 4px 15px -3px rgba(0, 0, 0, 0.08), inset 0 1px 0 0 rgba(255, 255, 255, 0.8); 
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+            position: relative;
+            overflow: hidden;
+        }
+        .glass-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent);
+        }
+        .glass-card:hover { 
+            transform: translateY(-4px);
+            box-shadow: 0 12px 25px -5px rgba(0, 0, 0, 0.12), inset 0 1px 0 0 rgba(255, 255, 255, 1);
+            border-color: rgba(34, 197, 94, 0.2);
+        }
+
+        /* Roadmap Elements */
+        .roadmap-container { position: relative; padding-left: 20px; }
+        .roadmap-line { position: absolute; left: 5px; top: 10px; bottom: 10px; width: 3px; background: linear-gradient(180deg, #E2E8F0, #CBD5E1); border-radius: 4px; }
+        .roadmap-progress-line { position: absolute; left: 5px; top: 10px; width: 3px; background: linear-gradient(180deg, #22c55e, #16a34a); border-radius: 4px; z-index: 1; height: 60%; box-shadow: 0 0 8px rgba(34, 197, 94, 0.3); }
+        .step-item { position: relative; margin-bottom: 20px; display: flex; align-items: flex-start; gap: 12px; z-index: 2; }
+        @media (min-width: 768px) {
+            .step-item { gap: 16px; margin-bottom: 30px; }
+        }
+        .step-icon { width: 28px; height: 28px; flex-shrink: 0; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: bold; border: 3px solid #F8FAFC; margin-left: -12.5px; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); }
+        @media (min-width: 768px) {
+            .step-icon { width: 32px; height: 32px; font-size: 12px; border-width: 4px; margin-left: -14.5px; }
+        }
+        .step-done .step-icon { background: linear-gradient(135deg, #22c55e, #16a34a); color: white; box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3); }
+        .step-active .step-icon { background: linear-gradient(135deg, #3B82F6, #1D4ED8); color: white; box-shadow: 0 0 12px rgba(59, 130, 246, 0.4); animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { box-shadow: 0 0 12px rgba(59, 130, 246, 0.4); } 50% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.6); } }
+        .step-locked .step-icon { background: linear-gradient(135deg, #CBD5E1, #94A3B8); color: white; }
+        .step-content { background: white; padding: 12px; border-radius: 12px; border: 1px solid #E2E8F0; width: 100%; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        @media (min-width: 768px) {
+            .step-content { padding: 16px; }
+        }
+        .step-active .step-content { border-color: #BFDBFE; background: linear-gradient(135deg, #F0F9FF, #F8FAFC); box-shadow: inset 0 0 0 1px rgba(59, 130, 246, 0.1); }
+        
+        /* Utils */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* HEATMAP STYLES */
+        .heatmap-wrapper { display: flex; flex-direction: column; gap: 8px; }
+        .heatmap-container { display: flex; gap: 2px; }
+        .heatmap-days-row { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 2px;
+            justify-content: center;
+            width: 50px;
+            min-width: 50px;
+            text-align: right;
+            padding-right: 16px;
+        }
+        .heatmap-days-row .day-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #64748B;
+            height: 14px;
+            line-height: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            white-space: nowrap;
+        }
+        .heatmap-main { 
+            display: flex; 
+            gap: 2px;
+            overflow-x: auto;
+        }
+        .heatmap-column { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 2px;
+        }
+        .heatmap-cell { 
+            width: 12px; 
+            height: 12px; 
+            border-radius: 2px; 
+            background-color: #ebedf0; 
+            position: relative; 
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05); 
+            cursor: pointer;
+        }
+        @media (min-width: 768px) {
+            .heatmap-cell { width: 13px; height: 13px; }
+        }
+        .heatmap-cell:hover { 
+            transform: scale(1.5); 
+            z-index: 10; 
+            outline: 1px solid #94a3b8; 
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15)); 
+        }
+        
+        /* Contribution Levels */
+        .level-0 { background: linear-gradient(135deg, #f3f4f6, #ebedf0); }
+        .level-1 { background: linear-gradient(135deg, #e0fce7, #dcfce7); }
+        .level-2 { background: linear-gradient(135deg, #86efac, #65e88d); }
+        .level-3 { background: linear-gradient(135deg, #22c55e, #16a34a); }
+        .level-4 { background: linear-gradient(135deg, #15803d, #0d4c1d); }
+
+        .heatmap-months { 
+            display: flex; 
+            gap: 2px;
+            padding-left: 66px;
+            margin-bottom: 8px;
+            font-size: 11px;
+            font-weight: 600;
+            color: #64748B;
+        }
+        .heatmap-months .month-section {
+            display: flex;
+            gap: 2px;
+        }
+        .heatmap-months .month-label {
+            padding-right: 4px;
+            white-space: nowrap;
+        }
+
+        /* Animation */
+        .unlock-btn { 
+            position: relative; 
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        .unlock-btn::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transform: translateX(-100%);
+            animation: shimmer 3s infinite;
+        }
+        @keyframes shimmer { 
+            0% { transform: translateX(-100%); } 
+            50% { transform: translateX(100%); }
+            100% { transform: translateX(100%); } 
+        }
+        .unlock-btn:hover {
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body class="text-slate-800 flex flex-col min-h-screen">
+
+    <nav class="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm shrink-0" style="background: linear-gradient(180deg, #FFFFFF 0%, #FAFBFC 100%); box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);">
+        <div class="max-w-[96%] 2xl:max-w-screen-2xl mx-auto px-2 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                
+                <div class="flex items-center gap-2 md:gap-3 pr-3 md:pr-8 border-r border-gray-100 my-3">
+                    <div class="w-8 h-8 bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center text-white font-bold text-lg rounded-sm shrink-0 shadow-sm">C</div>
+                    <span class="text-lg md:text-xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent tracking-tight hidden sm:block">PlacedBridge</span>
+                </div>
+
+                <div class="flex-1 flex space-x-2 overflow-x-auto no-scrollbar pl-3 md:pl-6 items-center">
+                    <a href="dashboard.html" class="nav-link active"><i class="fas fa-th-large"></i> Dashboard</a>
+                    <a href="roadmap.html" class="nav-link"><i class="fas fa-map-signs"></i> Roadmap</a>
+                    <a href="interview.html" class="nav-link"><i class="fas fa-robot"></i> AI Interview</a>
+                    <a href="internship.html" class="nav-link"><i class="fas fa-laptop-code"></i> AI Internship</a>
+                    <a href="soft-skills.html" class="nav-link"><i class="fas fa-comments"></i> Soft Skills</a>
+                    <a href="resume.html" class="nav-link"><i class="fas fa-file-alt"></i> ATS Analyzer</a>
+                    <a href="jobs.html" class="nav-link"><i class="fas fa-briefcase"></i> Jobs</a>
+                    <a href="aptitude.html" class="nav-link"><i class="fas fa-brain"></i> Aptitude</a>
+                    <a href="unlockgoal.html" class="nav-link text-purple-600 border-b-2 border-transparent hover:border-purple-600 ml-2">
+                        <i class="fas fa-bullseye text-purple-500"></i> UnlockGoal
+                    </a>
+                </div>
+
+                <div class="flex items-center gap-3 md:gap-4 pl-3 md:pl-4 border-l border-gray-100 my-3">
+                    <button class="hidden md:flex items-center gap-2 bg-yellow-100 text-yellow-700 px-3 py-1.5 rounded-md text-xs font-bold hover:bg-yellow-200 transition">
+                        <i class="fas fa-crown"></i> Pro
+                    </button>
+                    
+                    <div class="flex items-center gap-2 cursor-pointer group relative">
+                        <div id="nav-profile-img-container" class="w-8 h-8 bg-slate-200 rounded-full flex items-center justify-center text-slate-600 font-bold text-sm overflow-hidden shrink-0">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <i class="fas fa-chevron-down text-xs text-slate-400 group-hover:text-slate-600 hidden sm:block"></i>
+                        
+                        <div class="absolute right-0 top-10 w-56 bg-white border border-gray-200 rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
+                            <div class="p-4 border-b border-gray-100 bg-gray-50 rounded-t-lg">
+                                <p class="text-sm font-bold text-slate-800 truncate" id="dropdown-name">Student Name</p>
+                                <p class="text-xs text-brand-600 font-semibold mt-0.5">Free Plan</p>
+                            </div>
+                            <div class="p-2 space-y-1">
+                                <a href="profile.html" class="flex items-center gap-3 px-3 py-2 text-sm text-slate-600 hover:bg-brand-50 hover:text-brand-700 rounded-md transition">
+                                    <i class="fas fa-user-circle w-4"></i> My Profile
+                                </a>
+                                <a href="#" class="flex items-center gap-3 px-3 py-2 text-sm text-slate-600 hover:bg-brand-50 hover:text-brand-700 rounded-md transition">
+                                    <i class="fas fa-cog w-4"></i> Settings
+                                </a>
+                                <hr class="my-1 border-gray-100">
+                                <button onclick="logoutUser()" class="w-full flex items-center gap-3 px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded-md transition text-left">
+                                    <i class="fas fa-sign-out-alt w-4"></i> Logout
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-1 w-full max-w-[96%] 2xl:max-w-screen-2xl mx-auto px-2 sm:px-4 lg:px-8 py-4 md:py-8">
+        
+        <header class="flex flex-col md:flex-row justify-between items-start md:items-end gap-3 mb-6 md:mb-8 mt-2">
+            <div>
+                <p class="text-[10px] md:text-xs font-bold text-slate-400 uppercase tracking-wider mb-1" id="date-display">WED, FEB 18</p>
+                <h1 class="text-xl sm:text-2xl md:text-3xl font-extrabold text-slate-900 leading-tight">Good <span id="greeting" class="text-slate-700">Morning</span>, <span id="user-name" class="bg-gradient-to-r from-brand-500 to-brand-600 bg-clip-text text-transparent">Student</span>!</h1>
+                <p class="text-slate-500 mt-1 md:mt-2 text-xs md:text-sm flex flex-wrap items-center gap-1.5">You are on a <span id="user-streak" class="font-bold text-orange-600 bg-gradient-to-r from-orange-50 to-yellow-50 px-2 py-0.5 rounded-md flex items-center gap-1 shadow-sm"><i class="fas fa-fire"></i> 0 Day Streak</span>. Keep coding!</p>
+            </div>
+        </header>
+
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6 mb-6 md:mb-8">
+            <div class="glass-card p-3 md:p-6 flex items-center gap-2 md:gap-4 border-l-4 border-l-brand-500 relative overflow-hidden group">
+                <div class="absolute right-0 top-0 w-16 h-16 bg-brand-500 rounded-full opacity-0 group-hover:opacity-10 transition-opacity duration-300 -mr-8 -mt-8"></div>
+                <div class="w-8 h-8 md:w-12 md:h-12 bg-gradient-to-br from-green-100 to-green-50 text-brand-600 rounded-full flex items-center justify-center text-sm md:text-xl shrink-0" style="box-shadow: 0 4px 12px rgba(34, 197, 94, 0.15);"><i class="fas fa-graduation-cap"></i></div>
+                <div class="min-w-0">
+                    <h3 class="text-[10px] md:text-sm font-semibold text-slate-500 truncate">Academic</h3>
+                    <div class="text-base sm:text-lg md:text-2xl font-bold text-slate-900 truncate" id="stat-cgpa">0.0 <span class="text-[9px] md:text-xs text-slate-400 font-medium">CGPA</span></div>
+                </div>
+            </div>
+
+            <div class="glass-card p-3 md:p-6 flex items-center gap-2 md:gap-4 border-l-4 border-l-blue-500 relative overflow-hidden group">
+                <div class="absolute right-0 top-0 w-16 h-16 bg-blue-500 rounded-full opacity-0 group-hover:opacity-10 transition-opacity duration-300 -mr-8 -mt-8"></div>
+                <div class="w-8 h-8 md:w-12 md:h-12 bg-gradient-to-br from-blue-100 to-blue-50 text-blue-600 rounded-full flex items-center justify-center text-sm md:text-xl shrink-0" style="box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);"><i class="fas fa-brain"></i></div>
+                <div class="min-w-0">
+                    <h3 class="text-[10px] md:text-sm font-semibold text-slate-500 truncate">AI Skill</h3>
+                    <div class="text-base sm:text-lg md:text-2xl font-bold text-slate-900 truncate" id="stat-ai-score">0% </div>
+                </div>
+            </div>
+
+            <div class="glass-card p-3 md:p-6 flex items-center gap-2 md:gap-4 border-l-4 border-l-indigo-500 relative overflow-hidden group">
+                <div class="absolute right-0 top-0 w-16 h-16 bg-indigo-500 rounded-full opacity-0 group-hover:opacity-10 transition-opacity duration-300 -mr-8 -mt-8"></div>
+                <div class="w-8 h-8 md:w-12 md:h-12 bg-gradient-to-br from-indigo-100 to-indigo-50 text-indigo-600 rounded-full flex items-center justify-center text-sm md:text-xl shrink-0" style="box-shadow: 0 4px 12px rgba(99, 102, 241, 0.15);"><i class="fas fa-file-invoice"></i></div>
+                <div class="min-w-0">
+                    <h3 class="text-[10px] md:text-sm font-semibold text-slate-500 truncate">ATS Score</h3>
+                    <div class="text-base sm:text-lg md:text-2xl font-bold text-slate-900 truncate" id="stat-ats-score">0% </div>
+                </div>
+            </div>
+
+            <div class="glass-card p-3 md:p-6 flex items-center justify-between border-l-4 border-l-purple-500 relative overflow-hidden group">
+                <div class="absolute right-0 top-0 w-16 h-16 bg-purple-500 rounded-full opacity-0 group-hover:opacity-10 transition-opacity duration-300 -mr-8 -mt-8"></div>
+                <div class="min-w-0 flex-1 z-10">
+                    <h3 class="text-[10px] md:text-sm font-semibold text-slate-500 truncate mb-1">Aptitude</h3>
+                    <div class="text-base sm:text-lg md:text-2xl font-bold text-slate-900 flex items-center gap-1 md:gap-2">
+                        <span id="stat-aptitude-score-text">0%</span>
+                        <span id="stat-aptitude-badge"></span>
+                    </div>
+                </div>
+                
+                <!-- Bike Speedometer Gauge -->
+                <div class="relative w-16 h-16 md:w-20 md:h-20 shrink-0 flex items-end justify-center pb-2 z-10 ml-2">
+                    <!-- SVG Arc background -->
+                    <svg viewBox="0 0 100 50" class="absolute inset-0 w-full h-full overflow-visible">
+                        <!-- Background arc -->
+                        <path d="M 10 50 A 40 40 0 0 1 90 50" fill="none" stroke="#f1f5f9" stroke-width="10" stroke-linecap="round"/>
+                        <!-- Value arc -->
+                        <path id="gauge-arc" d="M 10 50 A 40 40 0 0 1 90 50" fill="none" stroke="url(#purpleGrad)" stroke-width="10" stroke-linecap="round" stroke-dasharray="125.6" stroke-dashoffset="125.6" style="transition: stroke-dashoffset 1.5s cubic-bezier(0.22, 1, 0.36, 1);" />
+                        <defs>
+                            <linearGradient id="purpleGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" stop-color="#9333ea" />
+                                <stop offset="100%" stop-color="#c084fc" />
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                    
+                    <!-- Needle Base -->
+                    <div class="absolute bottom-0 w-[14px] h-[14px] rounded-full bg-slate-800 z-20 border-[3px] border-white shadow-sm left-[42%] md:left-[43%] hidden"></div>
+                    <!-- Needle -->
+                    <div id="gauge-needle" class="absolute bottom-[2px] w-1 h-7 md:h-9 bg-slate-700 origin-bottom transform -rotate-90 transition-transform duration-1000 ease-out z-10 rounded-t-full shadow-sm left-[47%] md:left-[48%]">
+                        <div class="absolute -bottom-1 -left-1 w-3 h-3 bg-slate-800 rounded-full border-2 border-white"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 md:gap-8">
+            <div class="lg:col-span-8 space-y-5 md:space-y-8">
+                
+                <div class="glass-card p-4 md:p-6">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4 md:mb-6">
+                        <div>
+                            <h2 class="text-base md:text-lg font-bold text-slate-900 flex items-center gap-2">
+                                <span class="w-1 h-6 bg-gradient-to-b from-brand-500 to-brand-600 rounded"></span>
+                                Learning Consistency
+                            </h2>
+                            <p class="text-[10px] sm:text-xs text-slate-500 mt-0.5 md:mt-1">Daily activity and progress monitoring</p>
+                        </div>
+                        <div class="flex items-center gap-1.5 text-[9px] sm:text-[10px] font-bold text-slate-400">
+                            <span>Less</span>
+                            <div class="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-sm level-0"></div>
+                            <div class="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-sm level-1"></div>
+                            <div class="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-sm level-2"></div>
+                            <div class="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-sm level-3"></div>
+                            <div class="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-sm level-4"></div>
+                            <span>More</span>
+                        </div>
+                    </div>
+                    
+                    <div class="w-full overflow-x-auto no-scrollbar pb-2">
+                        <div class="heatmap-wrapper">
+                            <!-- Months Row -->
+                            <div class="heatmap-months" id="heatmap-months"></div>
+                            
+                            <!-- Grid with Days and Heatmap -->
+                            <div class="flex">
+                                <!-- Day Labels -->
+                                <div class="heatmap-days-row" id="heatmap-days"></div>
+                                
+                                <!-- Heatmap Grid -->
+                                <div class="heatmap-main no-scrollbar" id="heatmap-grid"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-card p-4 md:p-6">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4 md:mb-6">
+                        <div>
+                            <h2 class="text-base md:text-lg font-bold text-slate-900 flex items-center gap-2">
+                                <span class="w-1 h-6 bg-gradient-to-b from-blue-500 to-blue-600 rounded"></span>
+                                Your Skill Proficiency
+                            </h2>
+                            <p class="text-[10px] sm:text-xs text-slate-500 mt-0.5 md:mt-1">Based on Assessed Practical Skills</p>
+                        </div>
+                        <div class="flex gap-2 sm:gap-3">
+                            <span class="flex items-center gap-1.5 text-[10px] sm:text-xs font-semibold text-slate-600"><span class="w-2.5 h-2.5 rounded-sm bg-gradient-to-br from-blue-500 to-blue-600" style="box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);"></span> Skill Score</span>
+                        </div>
+                    </div>
+                    <div class="h-[200px] sm:h-[250px] md:h-[320px] w-full relative">
+                        <canvas id="realityChart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="glass-card p-5 md:p-8 relative overflow-hidden bg-gradient-to-br from-blue-50 to-indigo-50 flex flex-col md:flex-row items-center justify-between gap-5 text-center md:text-left" style="border: 2px solid transparent; background-image: linear-gradient(to right, rgba(59, 130, 246, 0.05), rgba(99, 102, 241, 0.05));">
+                    <div class="absolute right-0 top-0 w-72 h-72 bg-indigo-500 rounded-full -mr-32 -mt-32 blur-3xl opacity-5"></div>
+                    <div class="absolute left-0 bottom-0 w-56 h-56 bg-blue-500 rounded-full -ml-24 -mb-24 blur-3xl opacity-5"></div>
+                    <div class="relative z-10 w-full md:w-auto flex-1">
+                        <h2 class="text-lg md:text-2xl font-bold mb-1.5 md:mb-2 text-slate-900">🚀 Targeting a Dream Company?</h2>
+                        <p class="text-xs sm:text-sm text-slate-600 md:max-w-xl leading-relaxed">Use our UnlockGoal AI to generate the exact interview rounds for top companies like Google, Microsoft, and Amazon. Get a custom cracking roadmap.</p>
+                    </div>
+                    <a href="unlockgoal.html" class="unlock-btn shrink-0 w-full md:w-auto inline-flex items-center justify-center gap-2 bg-gradient-to-r from-brand-500 to-brand-600 text-white px-5 md:px-6 py-3 rounded-lg text-sm font-bold shadow-lg hover:shadow-xl transition relative z-10 text-white">
+                        <i class="fas fa-rocket"></i> Try UnlockGoal Now
+                    </a>
+                </div>
+
+                <div class="glass-card p-4 md:p-6">
+                    <h2 class="text-base md:text-lg font-bold text-slate-900 mb-5 md:mb-6 flex items-center gap-2">
+                        <span class="w-1 h-6 bg-gradient-to-b from-amber-500 to-orange-600 rounded"></span>
+                        Your Placement Journey
+                    </h2>
+                    <div class="roadmap-container pl-3 md:pl-5">
+                        <div class="roadmap-line"></div>
+                        <div class="roadmap-progress-line"></div>
+                        
+                        <div class="step-item step-done">
+                            <div class="step-icon"><i class="fas fa-check"></i></div>
+                            <div class="step-content">
+                                <h4 class="font-bold text-xs sm:text-sm text-slate-800">Profile & Core Setup</h4>
+                                <p class="text-[10px] sm:text-xs text-slate-500 mt-1 leading-relaxed">Profile updated and CS fundamentals ready.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="step-item step-active">
+                            <div class="step-icon"><i class="fas fa-robot"></i></div>
+                            <div class="step-content">
+                                <div class="flex flex-wrap gap-2 justify-between items-start">
+                                    <h4 class="font-bold text-xs sm:text-sm text-blue-800">AI Mock Interviews</h4>
+                                    <span class="text-[9px] sm:text-[10px] font-bold bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded">NOW</span>
+                                </div>
+                                <p class="text-[10px] sm:text-xs text-slate-600 mt-1 mb-2 sm:mb-3">Time to validate your skills through AI.</p>
+                                <a href="ai-practice.html" class="text-[10px] sm:text-xs font-bold text-white bg-blue-600 px-3 py-1.5 sm:px-4 sm:py-2 rounded-md hover:bg-blue-700 transition inline-block">Practice Now</a>
+                            </div>
+                        </div>
+                        
+                        <div class="step-item step-locked opacity-60">
+                            <div class="step-icon"><i class="fas fa-code-branch"></i></div>
+                            <div class="step-content">
+                                <h4 class="font-bold text-xs sm:text-sm text-slate-700">Unlock Goal Phase</h4>
+                                <p class="text-[10px] sm:text-xs text-slate-500 mt-1 leading-relaxed">Crack company specific actual interview rounds.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="lg:col-span-4 space-y-5 md:space-y-8">
+                <div class="glass-card p-0 overflow-hidden">
+                    <div class="bg-gradient-to-r from-brand-500 to-brand-600 p-3 sm:p-4 text-white shadow-sm">
+                        <h2 class="text-xs sm:text-sm font-bold flex items-center gap-2"><i class="fas fa-laptop-code"></i> Upcoming Hackathons</h2>
+                    </div>
+                    <div class="p-3 sm:p-4 space-y-3 sm:space-y-4" id="hackathon-list"></div>
+                </div>
+
+                <div class="glass-card p-4 md:p-5">
+                    <h2 class="text-xs sm:text-sm font-bold text-slate-900 mb-3 sm:mb-4 flex items-center gap-2">
+                        <span class="w-1.5 h-1.5 bg-gradient-to-r from-orange-500 to-red-500 rounded-full"></span>
+                        <i class="fas fa-fire text-orange-500"></i> Recommended for You
+                    </h2>
+                    <ul class="space-y-2.5 sm:space-y-3" id="recommendations-list"></ul>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script type="module" src="dashboard.js"></script>
+</body>
+</html>
