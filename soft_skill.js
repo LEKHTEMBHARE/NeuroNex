@@ -1,4 +1,4 @@
-const API_KEY = "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";
+const API_KEY = "paste your api key"
 const HINDI_FILLERS = ["matlab", "acha", "hai", "karna", "hua", "mtlb", "kaise", "bhai", "theek", "woh", "haan", "nahi", "hmm"];
 
 let recognition, isSessionActive = false, isAiSpeaking = false, transcriptBuffer = "", hindiCount = 0, chartInstance = null;
