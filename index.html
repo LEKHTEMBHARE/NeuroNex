@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PlaceBridge - Centralized Campus Placement Application System</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar" id="navbar">
+        <div class="container nav-container">
+            <div class="logo">
+                <i class="ph-fill ph-bridge"></i>
+                <span>PlaceBridge</span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#features">Features</a></li>
+                <li><a href="#how-it-works">How It Works</a></li>
+            </ul>
+            <div class="nav-actions">
+                <button class="btn btn-outline" id="login-btn">Log In</button>
+                <button class="btn btn-primary">Get Started</button>
+            </div>
+            <div class="mobile-menu-btn" id="mobile-menu-btn">
+                <i class="ph ph-list"></i>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-bg">
+            <div class="gradient-blob blob-1"></div>
+            <div class="gradient-blob blob-2"></div>
+        </div>
+        <div class="container hero-container">
+            <div class="hero-content reveal">
+                <div class="badge">🚀 The Future of Campus Placements</div>
+                <h1 class="hero-title">Never Miss a <span class="text-gradient">Placement Drive</span> Again.</h1>
+                <p class="hero-description">
+                    A centralized web-based platform where you can instantly check your eligibility for companies, track applications, and receive real-time updates—all in one place.
+                </p>
+                <div class="hero-cta">
+                    <button class="btn btn-primary btn-lg">Explore Companies <i class="ph ph-arrow-right"></i></button>
+                    <button class="btn btn-glass btn-lg"><i class="ph ph-play-circle"></i> View Demo</button>
+                </div>
+            </div>
+            
+            <div class="hero-visual reveal reveal-delay">
+                <div class="glass-card main-dashboard-mockup">
+                    <div class="mockup-header">
+                        <div class="dots">
+                            <span></span><span></span><span></span>
+                        </div>
+                        <div class="mockup-search">placebridge.com/dashboard</div>
+                    </div>
+                    <div class="mockup-body">
+                        <div class="student-profile">
+                            <div class="avatar"><i class="ph ph-user"></i></div>
+                            <div>
+                                <h4>Alex Developer</h4>
+                                <span>B.Tech Computer Science • CGPA: 8.5</span>
+                            </div>
+                        </div>
+                        <div class="stats-row">
+                            <div class="stat-box">
+                                <div class="stat-title">Eligible Roles</div>
+                                <div class="stat-value text-green">12</div>
+                            </div>
+                            <div class="stat-box">
+                                <div class="stat-title">Applied</div>
+                                <div class="stat-value text-blue">5</div>
+                            </div>
+                            <div class="stat-box">
+                                <div class="stat-title">Interviews</div>
+                                <div class="stat-value text-purple">2</div>
+                            </div>
+                        </div>
+                        <div class="recent-drives">
+                            <h5>Upcoming Drives Matching Profile</h5>
+                            <div class="drive-item">
+                                <div class="drive-logo tech-g">G</div>
+                                <div class="drive-info">
+                                    <strong>Software Engineer</strong>
+                                    <span>Global Tech • 15 LPA</span>
+                                </div>
+                                <div class="drive-status match">95% Match</div>
+                            </div>
+                            <div class="drive-item">
+                                <div class="drive-logo tech-m">M</div>
+                                <div class="drive-info">
+                                    <strong>Frontend Developer</strong>
+                                    <span>MetaSystems • 12 LPA</span>
+                                </div>
+                                <div class="drive-status auto-applied">Applied</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="floating-badge badge-1">
+                    <i class="ph-fill ph-check-circle text-green"></i>
+                    <span>CGPA Verified</span>
+                </div>
+                <div class="floating-badge badge-2">
+                    <i class="ph-fill ph-bell-ringing text-gold"></i>
+                    <span>TCS Drive Tomorrow!</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features">
+        <div class="container">
+            <div class="section-header reveal">
+                <h2>Why Choose <span class="text-gradient">PlaceBridge</span>?</h2>
+                <p>We eliminate manual tracking and fragmented communication, ensuring a seamless bridge between students and opportunities.</p>
+            </div>
+            
+            <div class="features-grid">
+                <!-- Feature 1 -->
+                <div class="feature-card glass-card reveal">
+                    <div class="feature-icon bg-blue-glow">
+                        <i class="ph ph-faders"></i>
+                    </div>
+                    <h3>Smart Eligibility Checker</h3>
+                    <p>Instantly check if you match dynamic company criteria based on your CGPA, key skills, past backlogs, and academic history.</p>
+                    <div class="feature-demo">
+                        <div class="mini-checker">
+                            <div class="requirement">
+                                <span>CGPA > 8.0</span> <i class="ph-bold ph-check text-green"></i>
+                            </div>
+                            <div class="requirement">
+                                <span>0 Active Backlogs</span> <i class="ph-bold ph-check text-green"></i>
+                            </div>
+                            <div class="requirement">
+                                <span>ReactJS Skill</span> <i class="ph-bold ph-check text-green"></i>
+                            </div>
+                            <div class="result pulse-glow">Eligible to Apply</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Feature 2 -->
+                <div class="feature-card glass-card reveal reveal-delay-1">
+                    <div class="feature-icon bg-purple-glow">
+                        <i class="ph ph-squares-four"></i>
+                    </div>
+                    <h3>Unified Dashboard</h3>
+                    <p>Track all your applications, interview schedules, test links, and current progress in one beautifully organized dashboard.</p>
+                    <div class="feature-demo progress-demo">
+                        <div class="progress-track">
+                            <div class="step completed">1. Applied</div>
+                            <div class="step completed">2. Aptitude</div>
+                            <div class="step active">3. Technical</div>
+                            <div class="step">4. HR</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Feature 3 -->
+                <div class="feature-card glass-card reveal reveal-delay-2">
+                    <div class="feature-icon bg-gold-glow">
+                        <i class="ph ph-bell-ringing"></i>
+                    </div>
+                    <h3>Real-Time Alerts</h3>
+                    <p>Never miss a deadline. Get instant notifications for new drives, application deadlines, shortlists, and interview schedules.</p>
+                    <div class="feature-demo alert-demo">
+                        <div class="toast-alert flex-row">
+                            <i class="ph-fill ph-warning-circle text-gold"></i>
+                            <div>
+                                <strong>Deadline Approaching</strong>
+                                <span>Amazon SDE application closes in 2 hours.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Interactive Eligibility Simulator -->
+    <section id="how-it-works" class="simulator">
+        <div class="container">
+            <div class="simulator-wrapper glass-card reveal">
+                <div class="simulator-content">
+                    <h2>Test the <span class="text-gradient">Magic</span></h2>
+                    <p>See how the Smart Eligibility Checker instantly filters opportunities based on student profiles.</p>
+                    
+                    <div class="simulator-form">
+                        <div class="form-group">
+                            <label>Your CGPA</label>
+                            <input type="range" id="cgpa-slider" min="5" max="10" step="0.1" value="7.5">
+                            <span id="cgpa-value" class="slider-val">7.5</span>
+                        </div>
+                        <div class="form-group">
+                            <label>Active Backlogs</label>
+                            <div class="toggle-group">
+                                <input type="radio" id="backlog-0" name="backlogs" value="0" checked>
+                                <label for="backlog-0">0</label>
+                                <input type="radio" id="backlog-1" name="backlogs" value="1">
+                                <label for="backlog-1">1</label>
+                                <input type="radio" id="backlog-2" name="backlogs" value="2">
+                                <label for="backlog-2">2+</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="simulator-results" id="sim-results">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container footer-container">
+            <div class="footer-brand">
+                <div class="logo">
+                    <i class="ph-fill ph-bridge text-gradient"></i>
+                    <span>PlaceBridge</span>
+                </div>
+                <p>Connecting students to their dream careers without the friction.</p>
+            </div>
+            <div class="footer-links">
+                <div class="link-col">
+                    <h4>Platform</h4>
+                    <a href="#">Eligibility Check</a>
+                    <a href="#">Dashboard</a>
+                    <a href="#">Notifications</a>
+                </div>
+                <div class="link-col">
+                    <h4>Resources</h4>
+                    <a href="#">Help Center</a>
+                    <a href="#">Placement Guidelines</a>
+                    <a href="#">Interview Prep</a>
+                </div>
+                <div class="link-col">
+                    <h4>Legal</h4>
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Terms of Service</a>
+                </div>
+            </div>
+        </div>
+        <div class="copyright">
+            <div class="container">
+                <p>&copy; 2026 PlaceBridge. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
